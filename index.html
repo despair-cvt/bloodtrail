@@ -1,0 +1,303 @@
+<!-- no skidding guys ts made by rotBT -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1887</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #ffffff;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  video {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    z-index: -3;
+    filter: brightness(0.5);
+  }
+
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .overlay {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.062);
+    padding: 60px;
+    border-radius: 20px;
+    z-index: 1;
+    position: relative;
+  }
+
+  h1 {
+    font-size: 5rem;
+    margin-bottom: -1rem;
+    text-shadow: 0 0 15px rgb(255, 255, 255);
+    transition: transform 0.3s ease;
+  }
+
+  h1:hover {
+    transform: scale(1.05);
+  }
+
+  h2 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 15px rgb(255, 255, 255);
+    transition: transform 0.3s ease;
+  }
+
+  .bomb {
+    width: 50px;
+    height: auto;
+    margin-bottom: 0rem;
+    filter: drop-shadow(0 0 10px rgba(209, 5, 5, 0.3));
+    transition: transform 0.3s ease;
+  }
+
+  .bomb:hover {
+    transform: scale(1.05);
+  }
+
+  .members {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .member-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+  }
+
+  .member {
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  .member:hover {
+    transform: scale(1.1);
+  }
+
+  .member img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.24);
+  }
+
+  .name {
+    font-weight: 600;
+  }
+
+  .role {
+    font-size: 0.8rem;
+    color: #db1111;
+  }
+
+  /* Enter screen styles */
+  #enter-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.959);
+    color: #ff0000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 7rem;
+    z-index: 10;
+    cursor: pointer;
+    user-select: none;
+    text-shadow: 0 0 15px #ff0000;
+
+    opacity: 1;
+    transition: opacity 1s ease;
+  }
+
+  #enter-screen.hide {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #enter-ip {
+    margin-top: -5px;
+    font-size: 2rem;
+    color: #dfdfdf;
+    text-shadow: 0 0 10px #a3a3a3;
+  }
+</style>
+</head>
+<body>
+
+<!-- Enter Screen -->
+<div id="enter-screen">
+  BloodTrail
+  <div id="enter-ip">rot - despair</div>
+</div>
+
+<audio id="bg-music" autoplay loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<video autoplay muted loop>
+  <source src="background.mp4" type="video/mp4">
+</video>
+
+<canvas id="snow"></canvas>
+
+<div class="overlay">
+  <h1>1887</h1>
+  <h2>BT</h2>
+  <img src="bomb.png" alt="Bomb" class="bomb">
+
+  <div class="members">
+    <div class="member-row">
+      <div class="member">
+        <img src="xai.jpg" alt="">
+        <p class="name">rot</p>
+        <p class="role">Founder</p>
+      </div>
+      <div class="member">
+        <img src="despair.jpg" alt="">
+        <p class="name">despair</p>
+        <p class="role">Founder</p>
+      </div>
+    </div>
+
+    <div class="member-row">
+      <div class="member">
+        <img src="xail.jpg" alt="">
+        <p class="name">xail1414</p>
+        <p class="role">Honorable</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const audio = document.getElementById('bg-music');
+  audio.volume = 0.25;
+
+  // Play audio on body click (for browsers that block autoplay)
+  window.addEventListener('load', () => { 
+    document.body.addEventListener('click', () => { 
+      if (audio.paused) audio.play(); 
+    }); 
+  });
+
+  // Snow effect
+  const canvas = document.getElementById('snow');
+  const ctx = canvas.getContext('2d');
+  let flakes = [];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function createFlakes() {
+    for (let i = 0; i < 150; i++) {
+      flakes.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 3 + 1,
+        d: Math.random() + 1
+      });
+    }
+  }
+  createFlakes();
+
+  let angle = 0;
+  function drawFlakes() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+    ctx.beginPath();
+    for (let i = 0; i < flakes.length; i++) {
+      const f = flakes[i];
+      ctx.moveTo(f.x, f.y);
+      ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+    }
+    ctx.fill();
+    moveFlakes();
+  }
+
+  function moveFlakes() {
+    angle += 0.01;
+    for (let i = 0; i < flakes.length; i++) {
+      const f = flakes[i];
+      f.y += (Math.pow(f.d, 2) + 1) * 0.25;
+      f.x += Math.sin(angle) * 0.3;
+
+      if (f.y > canvas.height) {
+        flakes[i] = {
+          x: Math.random() * canvas.width,
+          y: 0,
+          r: f.r,
+          d: f.d
+        };
+      }
+    }
+  }
+
+  function animateSnow() {
+    drawFlakes();
+    requestAnimationFrame(animateSnow);
+  }
+  animateSnow();
+
+  // Fetch IP and display (lol)
+  fetch('https://api.ipify.org?format=json')
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('enter-ip').textContent = "rot - despair";
+    })
+    .catch(() => {
+      document.getElementById('enter-ip').textContent = "maybe rot - maybe despair";
+    });
+
+  // Enter screen click to remove smoothly
+  const enterScreen = document.getElementById('enter-screen');
+  enterScreen.addEventListener('click', () => {
+    enterScreen.classList.add('hide');
+    setTimeout(() => {
+      enterScreen.remove();
+    }, 1000); // match CSS transition duration
+  });
+</script>
+
+</body>
+</html>
